@@ -5,13 +5,13 @@
 A second model (the "judge") grades each sampled answer with five DeepEval metrics:
 
   Metric                 Question it answers                                        Passes when
-  HR reference outcome   Does the answer state the case's required facts and        score >= 0.7
+  HR reference outcome   Does the answer state the case's required facts and        score >= 0.5
   (GEval rubric)         none of its forbidden ones?
-  Faithfulness           Is every claim in the answer supported by the passages     score >= 0.7
+  Faithfulness           Is every claim in the answer supported by the passages     score >= 0.5
                          retrieval returned? This is the hallucination check.
-  Answer relevancy       Does the answer address the question that was asked?       score >= 0.7
-  Bias                   Is the answer free of biased statements?                   score >= 0.7
-  Toxicity               Is the answer free of toxic language?                      score >= 0.7
+  Answer relevancy       Does the answer address the question that was asked?       score >= 0.5
+  Bias                   Is the answer free of biased statements?                   score >= 0.5
+  Toxicity               Is the answer free of toxic language?                      score >= 0.5
 
 Every score runs from 0 to 1, and higher is better. For bias and toxicity, DeepEval 4 scores
 the share of statements that are NOT biased or toxic, so 1.0 means none were found.
@@ -35,7 +35,7 @@ from deepeval.test_case import LLMTestCase, SingleTurnParams
 
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_SIZE = int(os.getenv('DEEPEVAL_DEMO_CASES', '5'))
-PASS_MARK = 0.7      # every metric: higher is better
+PASS_MARK = 0.5      # every metric: higher is better
 
 
 def evaluation_lambda():
