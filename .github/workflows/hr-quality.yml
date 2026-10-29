@@ -157,6 +157,9 @@ jobs:                                                                   # stages
         run: |
           python -m pip install -r ci/requirements-demo.txt
           python ci/deepeval_check.py
+      - name: Install Evidently dependencies
+        if: vars.ENABLE_EVIDENTLY == 'true'
+        run: python -m pip install "evidently==0.7.23" "pandas==2.3.3"
       - name: Prepare Evidently numeric drift inputs
         if: always() && steps.live.outcome != 'skipped' && vars.ENABLE_EVIDENTLY == 'true'
         run: python ci/prepare_drift.py                                 # build CSV
