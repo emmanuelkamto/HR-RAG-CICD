@@ -27,13 +27,26 @@ class CheckSettingsTests(unittest.TestCase):
     def test_a_pasted_line_break_is_named(self):
         variables, secrets = good_settings()
         variables['AWS_STAGING_ROLE_ARN'] = 'arn:aws:iam::123456789012:role/x\n'
+        normalized, cleaned = check_settings.normalize_settings(check_settings.VARIABLES, variables)
+        self.assertEqual(check_settings.check(normalized, secrets), [])
+        self.assertEqual(cleaned, ['AWS_STAGING_ROLE_ARN'])
+
+    def test_a_space_inside_is_named(self):
+        variables, secrets = good_settings()
+        variables['AWS_STAGING_ROLE_ARN'] = 'arn:aws:iam::123 456789012:role/x'
         self.assertEqual(check_settings.check(variables, secrets),
-                         ['AWS_STAGING_ROLE_ARN has a space or line break at the start or end'])
+                         ['AWS_STAGING_ROLE_ARN contains a space or line break'])
 
     def test_a_missing_secret_is_named(self):
         variables, secrets = good_settings()
         secrets['LANGFUSE_SECRET_KEY'] = ''
         self.assertEqual(check_settings.check(variables, secrets), ['LANGFUSE_SECRET_KEY is missing or empty'])
+
+    def test_a_secret_with_outer_space_is_named(self):
+        variables, secrets = good_settings()
+        secrets['LANGFUSE_SECRET_KEY'] = ' key '
+        self.assertEqual(check_settings.check(variables, secrets),
+                         ['LANGFUSE_SECRET_KEY contains a space or line break'])
 
     def test_switches_accept_only_true_or_false(self):
         variables, secrets = good_settings()
